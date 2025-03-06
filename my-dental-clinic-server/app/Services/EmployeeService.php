@@ -1,0 +1,24 @@
+<?php 
+namespace App\Services;
+
+use App\Repositories\EmployeeRepository;
+use Illuminate\Support\Facades\Hash;
+
+class EmployeeService extends BaseService
+{
+    protected $EmployeeRepository;
+
+    public function __construct(EmployeeRepository $EmployeeRepository)
+    {
+        $this->EmployeeRepository = $EmployeeRepository;
+        parent::__construct();
+    }
+    public function getRepository()
+    {
+        return $this->EmployeeRepository;
+    }
+    public function createEmployee($employee)
+    {
+        $newEmployee=$this->EmployeeRepository->create($employee);
+    }
+}

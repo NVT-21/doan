@@ -9,6 +9,13 @@ use App\Models\WorkScheduleDetail;
     }
     
     
+    function updateWorkScheduleDetail($workScheduleId,$shiftId,$status)
+    {
+        return WorkScheduleDetail::updateOrCreate(
+            ['workScheduleId' => $workScheduleId, 'shiftId' => $shiftId], 
+            ['status' => $status] 
+        );
+    }
 
    
    

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    protected $fillable = ['user_id', 'fullName', 'birthday', 'gender', 'phoneNumber'];
+    protected $fillable = ['user_id', 'fullName', 'birthday','idRoom', 'role','gender', 'phoneNumber'];
 
     public function user() {
         return $this->belongsTo(User::class);
@@ -15,4 +15,13 @@ class Employee extends Model
     {
         return $this->hasMany(WorkSchedule::class, 'idEmployee');
     }
+    public function medicalExams()
+    {
+        return $this->hasMany(MedicalExam::class, 'idEmployee'); 
+    }
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'idRoom');
+    }
+
 }

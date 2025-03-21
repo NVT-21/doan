@@ -17,4 +17,9 @@ class Patient extends Model
     {
         return $this->hasMany(Appointment::class, 'idPatient');
     }
+    public function latestAppointment()
+{
+    return $this->hasOne(Appointment::class, 'idPatient')->latestOfMany();
+}
+
 }

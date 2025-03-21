@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Services\WorkScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 class WorkScheduleController extends ApiResponseController
 {
     protected $WorkScheduleService ;
@@ -12,7 +12,7 @@ class WorkScheduleController extends ApiResponseController
     {
         $this->WorkScheduleService = $WorkScheduleService;
     }
-    public function store(Request $request)
+    public function createOrUpdate(Request $request)
     {   $employee=$this->getEmployee();
         if(!$employee)
         {
@@ -20,7 +20,7 @@ class WorkScheduleController extends ApiResponseController
         }
         $idEmployee=$employee->id;
         $data=$request->all();
-        $result=$this->WorkScheduleService->createWorkSchedule($idEmployee,$data);
+        $result=$this->WorkScheduleService->createOrUpdateWorkSchedule($idEmployee,$data);
         if ($result['success']) {
             return $this->success($result['message']);
          } else {
@@ -33,9 +33,18 @@ class WorkScheduleController extends ApiResponseController
     {
          $input =[
             'page' => $request->input('page', 1),
-            'limit' => $request->input('limit', 10),
-            '$conditions' => $request->input('conditions')
+            'pageSize' => $request->input('pageSize', 10),
+            'month' => $request->input('month'),
+            'keyword' => $request->input('keyword'),
+            'year' => $request->input('year')
+            
          ];
-         return $this->WorkScheduleService->workSchedules();
+         return $this->WorkScheduleService->workSchedules($input);
+    }
+    public function getDoctorWorking()
+    {
+        $date = Carbon::now()->format('Y-m-d'); 
+        $time = Carbon::now()->hour;
+        return $this->WorkScheduleService->getDoctorWorking($date,$time);
     }
 }

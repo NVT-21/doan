@@ -49,7 +49,7 @@ class AuthController extends ApiResponseController
             if ($newUser) {
                 // Thêm user_id vào mảng employee
                 $employee['user_id'] = $newUser->id;
-    
+                $employee['role']=$this->roleNameById($role);
                 // Tạo mới employee
                 $this->EmployeeService->createEmployee($employee);
     

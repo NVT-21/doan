@@ -54,5 +54,17 @@ class PatientController extends ApiResponseController
     {
         return view ('Admin.list-patient');
     }
-   
+    public function findByNumberPhone(Request $request)
+    {
+        $phoneNumber=$request->input('phoneNumber');
+        $result= $this->PatientService->searchPatientByPhone($phoneNumber);
+        if($result['success'])
+        {
+            return $this->success($result['message'],$result['data']);
+        }
+        else {
+            return $this->error($result['message']);
+        }
+    }
+    
 }

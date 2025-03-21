@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
+use App\Models\Role;
 class ApiResponseController extends Controller
 {
     /**
@@ -45,4 +46,16 @@ class ApiResponseController extends Controller
         $user = Auth::user();
         return $user ? Employee::where('user_id', $user->id)->first() : null;
     }
+    public function roleNameById($id)
+    {
+        return Role::where("id", $id)->first()?->name; 
+    }
+    public function getDoctorsWithoutRoom()
+        {
+            return Employee::whereNull('idRoom')
+                ->where('role', 'Doctor') 
+                ->get();
+        }
+
+    
 }

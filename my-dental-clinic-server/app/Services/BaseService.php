@@ -32,7 +32,7 @@ abstract class BaseService
         }
         catch(Throwable $e)
         {
-            Log::error($e->getMessage);
+            Log::error($e->getMessage());
             DB::rollBack();
             return [
                 "success"=> false,
@@ -83,9 +83,39 @@ abstract class BaseService
         return $this->repository->getAll();
     }
     public function paging(array $input){
-        $pageIndex = $input["page_index"] ?? 1;
         $pageSize = $input["page_size"] ?? 10;
         $conditions = $input["conditions"] ?? null;
-        return $this->repository->paging($pageIndex, $pageSize, $conditions);
+        return $this->repository->paging( $pageSize, $conditions);
+    }
+    public function createOrUpdate($data)
+    {
+        DB::beginTransaction();
+        try
+        {
+            if(!empty($data['id']))
+            {
+                $this->repository->update($data['id'],$data);
+                DB::commit();
+            return [
+                "success"=> true,
+                "message"=>"Successfully updated"
+            ];
+            }
+            $this->repository->create($data);
+            DB::commit();
+            return [
+                "success"=> true,
+                "message"=>"Successfully created"
+            ];
+        }
+        catch(Throwable $e)
+        {
+            Log::error($e->getMessage());
+            DB::rollBack();
+            return [
+                "success"=> false,
+                "message"=>"Failed to create"
+            ];
+        }
     }
 }

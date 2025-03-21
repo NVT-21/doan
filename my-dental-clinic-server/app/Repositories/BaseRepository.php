@@ -35,7 +35,7 @@ abstract class BaseRepository
     {
         return $this->model->destroy($id);
     }
-    public function paging(int $pageIndex, int $pageSize, ?array $conditions)
+    public function paging( int $pageSize, ?array $conditions)
 {
     $query = $this->model; 
     if (!empty($conditions)) {
@@ -45,7 +45,7 @@ abstract class BaseRepository
             }
         });
     }
-    return $query->paginate($pageSize, ['*'], 'page', $pageIndex);
+    return $query->paginate($pageSize);
 }
 
     

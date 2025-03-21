@@ -21,4 +21,11 @@ class EmployeeService extends BaseService
     {
         $newEmployee=$this->EmployeeRepository->create($employee);
     }
+    public function getDoctorsWithoutRoom(){
+        return $this->EmployeeRepository->getDoctorsWithoutRoom();
+    }
+    public function getRoomOfDoctor($idDoctor)
+    {
+        return $this->EmployeeRepository->getRoomOfDoctor($idDoctor);
+    }
 }

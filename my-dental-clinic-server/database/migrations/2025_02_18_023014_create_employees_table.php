@@ -18,6 +18,9 @@ return new class extends Migration
             $table->date("birthday"); 
             $table->string("gender", 50); 
             $table->string("phoneNumber", 20);
+            // $table->string('role', 255)->nullable()->after('gender');
+            // $table->unsignedBigInteger('idRoom')->nullable()->after('id'); 
+            // $table->foreign('idRoom')->references('id')->on('rooms')->onDelete('set null');
             $table->timestamps(); 
         });
     }

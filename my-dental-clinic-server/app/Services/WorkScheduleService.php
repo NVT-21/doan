@@ -22,11 +22,28 @@ class WorkScheduleService extends BaseService
     {
         return $this->WorkScheduleRepository;
     }
-    public function createWorkSchedule($idEmployee,$data)
+    public function createOrUpdateWorkSchedule($idEmployee,$data)
     {
         try {
             return DB::transaction(function () use ($idEmployee, $data) {
-                
+                if(!empty($data['id']))
+                {
+                    $workSchedule=$this->WorkScheduleDetailRepository->getById($data['id']);
+                    if (!$workSchedule) {
+                        return [
+                            "success" => false,
+                            "message" => "Work schedule not found!"
+                        ];
+                    }
+                    foreach ($data['status'] as $shiftId => $status) {
+                        $this->WorkScheduleDetailRepository->updateWorkScheduleDetail( $workSchedule->id, $shiftId, $status);
+                    }
+                    return [
+                        "success" => true,
+                        "message" => "Work schedule updated successfully",
+                        "workSchedule" => $workSchedule
+                    ];
+                }
                 $registerDate = $data['registerDate'];
                 $workSchedule = $this->WorkScheduleRepository->create([
                     'registerDate' => $registerDate,
@@ -56,8 +73,12 @@ class WorkScheduleService extends BaseService
             ];
         }
     }
-   public function workSchedules()
+   public function workSchedules($input)
    {
-    return $this->WorkScheduleRepository->getWorkSchedules();
+    return $this->WorkScheduleRepository->getWorkSchedules($input);
+   }
+   public function getDoctorWorking($date,$time)
+   {
+    return $this->WorkScheduleRepository->getDoctorsByShiftWithExamCount($date,$time);
    }
 }

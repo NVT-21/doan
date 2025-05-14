@@ -17,7 +17,11 @@ class WorkScheduleRepository extends BaseRepository
         $month=$input['month'];
         $name=$input['keyword'];
         $pageSize=$input['pageSize'];
+        $employeeId = $input['employeeId'] ?? null; 
         $query = WorkSchedule::with(['employee', 'workScheduleDetails.workShift']);
+        if ($employeeId ) {
+            $query->where('idEmployee', $employeeId );
+        }
         if ($year && $month) {
             $query->whereYear('registerDate', $year)
                   ->whereMonth('registerDate', $month);
@@ -70,28 +74,38 @@ class WorkScheduleRepository extends BaseRepository
     
         // Truy vấn danh sách bác sĩ làm việc trong ca + Đếm medicalExams có status = 'pending'
         $doctors = WorkSchedule::with([
-                'employee' => function ($query) {
-                    $query->withCount([
-                        'medicalExams as pending_exams_count' => function ($q) {
-                            $q->where('status', 'pending'); 
-                        }
-                    ]);
-                },
-                'workScheduleDetails.workShift'
-            ])
-            ->where('registerDate', $date)
-            ->whereHas('workScheduleDetails', function ($q) use ($shiftId) {
-                $q->where('shiftId', $shiftId)
-                  ->where('status', 'working');
-            })
-            ->get()
-            ->sortBy(fn($schedule) => $schedule->employee->pending_exams_count ?? 0) 
-            ->pluck('employee'); 
+            'employee' => function ($query) {
+                $query->where('status', 'working') // Thêm điều kiện lọc theo status của employee
+                      ->withCount([
+                          'medicalExams as pending_exams_count' => function ($q) {
+                              $q->where('status', 'pending');
+                          }
+                      ]);
+            },
+            'workScheduleDetails.workShift'
+        ])
+        ->where('registerDate', $date)
+        ->whereHas('workScheduleDetails', function ($q) use ($shiftId) {
+            $q->where('shiftId', $shiftId)
+              ->where('status', 'working');
+        })
+        ->get()
+        ->filter(fn($schedule) => $schedule->employee !== null) // Đảm bảo chỉ lấy các bác sĩ còn tồn tại sau khi lọc status
+        ->sortBy(fn($schedule) => $schedule->employee->pending_exams_count ?? 0)
+        ->pluck('employee');
+    
+        
     
         return $doctors;
     }
     
-    
+    public function getByDateAndEmployee($date, $employeeId)
+{
+    return WorkSchedule::whereDate('registerDate', $date)
+        ->where('idEmployee', $employeeId)
+        ->first();
+}
+
   
    
 }

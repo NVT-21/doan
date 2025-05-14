@@ -94,5 +94,9 @@ class PatientService extends BaseService
             'data' => $data
         ];
     }
+    public function getMedicalExamsOfPatient($phoneNumber)
+    {
+        return $this->PatientRepository->getMedicalExamsOfPatient($phoneNumber);
+    }
     
 }

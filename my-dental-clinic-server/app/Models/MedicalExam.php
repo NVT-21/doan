@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MedicalExam extends Model
 {
     protected $fillable = ['idEmployee', 'idAppointment', 'symptoms', 'status','statusPayment' 
-    ,'statusPayment', 'ExamDate'];
+    ,'statusPayment', 'ExamDate','diagnosis','advice'];
 
   
     public function employee()
@@ -22,9 +22,14 @@ class MedicalExam extends Model
         return $this->belongsTo(Appointment::class, 'idAppointment');
     }
     public function services() {
-        return $this->belongsToMany(Service::class, 'medical_exam_service')
+        return $this->belongsToMany(Service::class, 'medical_exam_services')
                     ->withPivot('quantity', 'content', 'price')
                     ->withTimestamps();
     }
+    public function prescription()
+{
+    return $this->hasOne(Prescription::class, 'idMedicalExam');
+}
+
     
 }

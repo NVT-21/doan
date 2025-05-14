@@ -28,4 +28,8 @@ class EmployeeService extends BaseService
     {
         return $this->EmployeeRepository->getRoomOfDoctor($idDoctor);
     }
+    public function paging($input)
+    {
+        return $this->EmployeeRepository->getEmployees($input);
+    }
 }

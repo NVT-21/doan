@@ -23,9 +23,10 @@ abstract class BaseService
         DB::beginTransaction();
         try
         {
-            $this->repository->create($data);
+            $data=$this->repository->create($data);
             DB::commit();
             return [
+                "data"=>$data,
                 "success"=> true,
                 "message"=>"Successfully created"
             ];

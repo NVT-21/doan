@@ -21,8 +21,16 @@ class MedicalExamService extends BaseService
     {
         return $this->MedicalExamRepository->createMedicalExam($data);
     }
-    public function getMedicalExam($perPage,$status,$statusPayment)
+    public function getMedicalExam($perPage,$status,$statusPayment,$idEmployee)
     {
-        return $this->MedicalExamRepository->getMedicalExam($perPage,$status,$statusPayment);
+        return $this->MedicalExamRepository->getMedicalExam($perPage,$status,$statusPayment,$idEmployee);
     }
+    public function saveDoctorConclusion($data)
+    {
+        return $this->MedicalExamRepository->saveDoctorConclusion($data);
+    }
+    public function getPrescriptionAndService($idMedicalExam)
+{
+    return $this->MedicalExamRepository->getPrescriptionAndService($idMedicalExam);
+}
 }

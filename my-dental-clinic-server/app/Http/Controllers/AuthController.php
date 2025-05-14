@@ -26,23 +26,41 @@ class AuthController extends ApiResponseController
         $result = $this->AuthService->login($credentials);
 
         if ($result['success']) {
-           return $this->success($result['message'], $result['token']);
+            
+            return response()->json([
+                'message' => $result['message'],
+                'token' => $result['token'],
+                'user' => $result['user'] // Trả về user
+            ]);
         } else {
-        
-            return $this->error($result['message']);
-        }
+            return response()->json([
+                'message' => $result['message']
+            ], 401);
+        }   
     }
-    public function register (Request $request)
+    public function saveOrUpdateEmployee (Request $request)
     {
-        $credential = $request->only('email', 'password');
-        $role = $request->only('role');
-        $employee = $request->only('fullName', 'phoneNumber', 'gender', 'birthday');
-        if ($this->AuthService->isEmail($credential['email'])) {
-            return response()->json(['message' => 'Email already exists'], 400); 
-        }
+       
         DB::beginTransaction();
     
         try {
+            $employeeId = $request->input('id'); // 👈 Nếu có ID thì là update
+
+            if ($employeeId) {
+                // Cập nhật nhân viên
+                $employeeData = $request->only('fullName', 'phoneNumber', 'gender', 'birthday', 'status');
+                
+                $this->AuthService->updateEmployee($employeeId, $employeeData); // 👈 bạn cần có hàm này
+    
+                DB::commit();
+                return response()->json(['message' => 'Employee updated successfully'], 200);
+            }
+            $credential = $request->only('email', 'password');
+            $role = $request->only('role');
+            $employee = $request->only('fullName', 'phoneNumber', 'gender', 'birthday');
+            if ($this->AuthService->isEmail($credential['email'])) {
+                return response()->json(['message' => 'Email already exists'], 400); 
+            }
             // Gán vai trò cho user và tạo mới user
             $newUser = $this->AuthService->assignRole($credential, $role);
     
@@ -83,7 +101,8 @@ class AuthController extends ApiResponseController
     }
     public function getUser ()
     {
-        return $this->AuthService->getUser() ;
+        $user =$this->AuthService->getUser() ;
+        return $user;
     }
 
 }

@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Log;
     function getModel(){
         return Service::class ;
     }
+    public function findServiceByName($name)
+{
+    return Service::where('serviceName', 'like', "%{$name}%")->get();
+}
+
     
 
 

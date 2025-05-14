@@ -18,8 +18,11 @@ class Patient extends Model
         return $this->hasMany(Appointment::class, 'idPatient');
     }
     public function latestAppointment()
-{
-    return $this->hasOne(Appointment::class, 'idPatient')->latestOfMany();
-}
+    {
+        return $this->hasOne(Appointment::class, 'idPatient')
+            ->whereDate('bookingDate', '>=', now()->toDateString())
+            ->where('status', 'Confirmed')
+            ->latest('bookingDate');
+    }
 
 }

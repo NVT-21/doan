@@ -22,6 +22,21 @@ use App\Models\Employee;
 
     return response()->json($employee->room, 200);
     }
-   
+    public function getEmployees($input)
+    {
+        $query = Employee::query();
     
+        if (!empty($input['keyword'])) {
+            $query->where('fullName', 'LIKE', '%' . $input['keyword'] . '%');
+        }
+    
+        if (!empty($input['status']) && $input['status'] !== 'all') {
+            $query->where('status', $input['status']);
+        }
+    
+        $perPage = $input['per_page'] ?? 10;
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+    
+  
  }

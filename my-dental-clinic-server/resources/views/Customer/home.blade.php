@@ -318,9 +318,11 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-4 form-group mt-3">
-              <input type="datetime-local" name="birthdate" class="form-control datepicker" id="birthdate" placeholder="Appointment Date" required="">
-            </div>
+          <div class="col-md-4 form-group mt-3">
+            <label for="birthdate">Birthday</label>
+            <input type="date" name="birthdate" class="form-control" id="birthdate" placeholder="Enter your birthday" required>
+          </div>
+
           <div class="form-group mt-3">
             <textarea class="form-control" name="message" rows="5" placeholder="Additional Notes (Optional)"></textarea>
           </div>

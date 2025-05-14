@@ -66,5 +66,9 @@ class PatientController extends ApiResponseController
             return $this->error($result['message']);
         }
     }
-    
+    public function getMedicalExamsOfPatient(Request $request)
+    {
+       $phoneNumber=$request->input('phoneNumber');
+       return $this->PatientService->getMedicalExamsOfPatient($phoneNumber);
+    }
 }

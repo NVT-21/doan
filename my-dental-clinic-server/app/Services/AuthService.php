@@ -21,13 +21,46 @@ class AuthService extends BaseService
     public function login($credentials)
     {
         $user = $this->AuthRepository->findByEmail($credentials['email']);
-        if (!$user || !Auth::attempt($credentials)) {
-            // Đăng nhập thành công, chuyển hướng đến dashboard
-            return ['success' =>false, 'message' =>'Invalid credentials'];
+        
+        // Check if user exists
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'Invalid credentials'
+            ];
         }
+    
+        // Check status for non-admin users
+        $isAdmin = $user->roles->contains('name', 'admin');
+        if (!$isAdmin && $user->employee && $user->employee->status === 'resigned') {
+            return [
+                'success' => false,
+                'message' => 'Account is no longer active'
+            ];
+        }
+    
+        // Attempt authentication
+        if (!Auth::attempt($credentials)) {
+            return [
+                'success' => false,
+                'message' => 'Invalid credentials'
+            ];
+        }
+    
         $token = $user->createToken('authToken')->plainTextToken;
-        return ['success' => true, 'message' => 'Login successful', 'token' => $token];
+        
+        return [
+            'success' => true,
+            'message' => "Login Successfully!",
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'roles' => $user->roles->pluck('name'),
+            ],
+            'token' => $token,
+        ];
     }
+    
     public function assignRole ($user,$role)
     {
         $newUser=$this->AuthRepository->create($user);
@@ -65,5 +98,9 @@ class AuthService extends BaseService
             return ['success' => false,'message' => 'User not found or not authenticated'];
         }
         return ['success' => true, 'user' => $user];
+    }
+    public function updateEmployee($id, $data)
+    {
+       return $this->AuthRepository->updateEmployee($id,$data);
     }
 }

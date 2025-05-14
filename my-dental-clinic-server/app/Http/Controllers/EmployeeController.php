@@ -19,4 +19,11 @@ class EmployeeController extends Controller
     {
         return $this->EmployeeService->getRoomOfDoctor($id);
     }
+    public function paging (Request $request)
+    {
+        $input =$request->all();
+        return $this->EmployeeService->paging($input);
+
+    }
+    
 }

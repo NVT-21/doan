@@ -33,5 +33,10 @@ class ServiceController extends ApiResponseController
     $result=$this->ServiceService->destroy($id);
     return $result;
    }
+   public function getByName (Request $request)
+   {
+    $name=$request->input('name');
+    return $this->ServiceService->getByName($name);
+   }
   
 }

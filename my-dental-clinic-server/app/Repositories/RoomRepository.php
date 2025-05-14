@@ -8,12 +8,16 @@ use App\Models\Employee;
     function getModel(){
         return Room::class ;
     }
-   public function getDoctorInRoom($room)
-   {
-    return Room::with(["employees" => function ($query) {
-        $query->where('role', 'Doctor');
-    }]) ->where("id",$room) ->first();
-   }
+    public function getDoctorInRoom($room)
+    {
+        return Room::with(['employees' => function ($query) {
+            $query->where('role', 'Doctor')
+                  ->where('status', 'working'); // thêm điều kiện status
+        }])
+        ->where('id', $room)
+        ->first();
+    }
+    
     
    public function updateDoctorsToRoom($idRoom, $idDoctors)
 {

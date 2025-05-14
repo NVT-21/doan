@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 use App\Models\User;
+use App\Models\Employee;
  class AuthRepository extends BaseRepository
  {
     function getModel(){
@@ -11,5 +12,10 @@ use App\Models\User;
     {
         return User::where('email', $email)->first();
     }
-   
+    public function updateEmployee($id, $data)
+    {
+        $employee = Employee::findOrFail($id);
+        $employee->update($data);
+        return $employee;
+    }
  }

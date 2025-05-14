@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('idPatient');
             $table->date('bookingDate')->nullable();
-            $table->time('AppointmentTime')->nullable();
+            $table->time('appointmentTime')->nullable();
             $table->string('status')->default('Pending')->nullable();
             $table->timestamps();
     

@@ -17,5 +17,8 @@ class ServiceService extends BaseService
     {
         return $this->ServiceRepository;
     }
+    public function getByName($name){
+        return $this->ServiceRepository->findServiceByName($name);
+    }
    
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Employee;
 use App\Models\Role;
+use App\Models\User;
 class ApiResponseController extends Controller
 {
     /**
@@ -46,16 +47,23 @@ class ApiResponseController extends Controller
         $user = Auth::user();
         return $user ? Employee::where('user_id', $user->id)->first() : null;
     }
+    public function getUser()
+    {
+        return  User::with('roles')->find(Auth::id());
+    }
     public function roleNameById($id)
     {
         return Role::where("id", $id)->first()?->name; 
     }
     public function getDoctorsWithoutRoom()
-        {
-            return Employee::whereNull('idRoom')
-                ->where('role', 'Doctor') 
-                ->get();
-        }
+    {
+        return Employee::whereNull('idRoom')
+            ->where('role', 'Doctor')
+            ->where('status', 'working') // thêm điều kiện status
+            ->get();
+    }
+    
+    
 
     
 }

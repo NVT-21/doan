@@ -16,12 +16,8 @@ use App\Models\Patient;
     public function searchPatientByPhone($phoneNumber)
     {
         $patient = Patient::where('phoneNumber', $phoneNumber)
-            ->with(['latestAppointment' => function ($query) {
-                $query->whereDate('bookingDate', '>=', now()->toDateString()) 
-                      ->where('status', 'Confirmed') // Lọc thêm status = 'confirm'
-                      ->latest('bookingDate'); // Lấy cuộc hẹn mới nhất
-            }])
-            ->first();
+        ->with('latestAppointment')
+        ->first();
     
         return $patient;
     }
@@ -32,5 +28,17 @@ use App\Models\Patient;
         ->first();
         return $patient;
     }
+    public function getMedicalExamsOfPatient($phoneNumber)
+    {
+        return Patient::with(['appointments.medicalExam' => function($query) {
+            // Lọc theo status của MedicalExam
+            $query->where('medical_exams.status', 'Completed');
+        }])
+        ->where('phoneNumber', $phoneNumber)
+        ->first();  
+    }
+    
+
+    
 
  }

@@ -5,6 +5,7 @@ use App\Services\WorkScheduleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+
 class WorkScheduleController extends ApiResponseController
 {
     protected $WorkScheduleService ;
@@ -39,6 +40,18 @@ class WorkScheduleController extends ApiResponseController
             'year' => $request->input('year')
             
          ];
+           // Lấy thông tin người dùng đã đăng nhập
+         $user = $this->getUser();
+         if (
+            $user &&
+            (in_array('Doctor', $user->roles->pluck('name')->toArray()) ||
+             in_array('Receptionist', $user->roles->pluck('name')->toArray()))
+        ) {
+            $employee = $user->employee;
+            if ($employee) {
+                $input['employeeId'] = $employee->id;
+            }
+        }
          return $this->WorkScheduleService->workSchedules($input);
     }
     public function getDoctorWorking()

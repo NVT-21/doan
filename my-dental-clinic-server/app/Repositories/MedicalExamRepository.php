@@ -71,7 +71,7 @@ use Illuminate\Support\Facades\Log;
         ];
     }
 }
-public function getMedicalExam($perPage=5,$status="Pending",$statusPayment)
+public function getMedicalExam($perPage=5,$status="Pending",$statusPayment,$idEmployee)
 {
     $query = MedicalExam::with(['appointment.patient','employee']) // Lấy thông tin appointment + patient
     ->leftJoin('appointments', 'medical_exams.idAppointment', '=', 'appointments.id')
@@ -88,10 +88,63 @@ if ($status && $status!=="all") {
 }
 if ($statusPayment && $statusPayment!=='all')
 {
-    $query->where('medical_exams.statusPayment', $status);
+    $query->where('medical_exams.statusPayment', $statusPayment);
+}
+if ($idEmployee) {
+    $query->where('medical_exams.idEmployee', $idEmployee);
 }
 return $query->paginate($perPage);
 }
+public function saveDoctorConclusion(array $data)
+{
+    // Validate presence of required fields
+    if ( !isset($data['medical_exam_id'])) {
+        throw new \InvalidArgumentException('Missing required data: medical_exam_id.');
+    }
+
+    // Find the medical exam by ID
+    $exam = MedicalExam::findOrFail($data['medical_exam_id']);
+
+    // Update the exam with diagnosis and advice
+    $exam->diagnosis = $data['diagnosis'];
+    $exam->advice = $data['advice'];
+    $exam->save();
+
+    return $exam;
+}
+public function getPrescriptionAndService($idMedicalExam)
+{
+    try {
+        $medicalExam = MedicalExam::findOrFail($idMedicalExam);
+
+        $services = $medicalExam->services;
+
+        $prescription = $medicalExam->prescription;
+
+        $medicines = $prescription ? $prescription->medicines : collect();
+
+        return response()->json([
+            'success' => true,
+            'services' => $services,
+            'medicines' => $medicines
+        ], 200);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Medical exam not found.'
+        ], 404);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
 
 
    

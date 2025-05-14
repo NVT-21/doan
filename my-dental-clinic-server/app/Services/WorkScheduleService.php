@@ -45,6 +45,13 @@ class WorkScheduleService extends BaseService
                     ];
                 }
                 $registerDate = $data['registerDate'];
+                $existing = $this->WorkScheduleRepository->getByDateAndEmployee($registerDate, $idEmployee);
+                if ($existing) {
+                    return [
+                        "success" => false,
+                        "message" => "Work schedule already exists for today"
+                    ];
+                }   
                 $workSchedule = $this->WorkScheduleRepository->create([
                     'registerDate' => $registerDate,
                     'idEmployee' => $idEmployee
